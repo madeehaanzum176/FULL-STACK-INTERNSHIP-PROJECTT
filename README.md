@@ -1,1 +1,403 @@
-# FULL-STACK-INTERNSHIP-PROJECTT
+<div align="center">
+
+# 🎓 College Internship Management System
+
+**A full-stack web platform to streamline internship workflows across students, employers, coordinators, and administrators.**
+
+[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.6.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.3.5-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+
+<br/>
+
+> Built for colleges to manage the complete internship lifecycle — from posting and applying to tracking, reporting, and feedback — all in one place.
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [System Architecture](#-system-architecture)
+- [User Roles](#-user-roles)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [API Reference](#-api-reference)
+- [Running Tests](#-running-tests)
+- [Contributing](#-contributing)
+
+---
+
+## 🌟 Overview
+
+The **College Internship Management System** is a role-based web application that connects students, employers, placement coordinators, and administrators on a unified platform. It handles everything from internship discovery and applications to report submission, employer feedback, and administrative oversight — eliminating manual processes and paperwork.
+
+---
+
+## ✨ Features
+
+### 👨‍🎓 Student
+- Register, log in, and manage a detailed profile (skills, LinkedIn, education, experience)
+- Browse and apply for internship listings
+- Upload resumes, certifications, internship reports, and certificates
+- Track application status in real time
+- View announcements from coordinators
+
+### 🏢 Employer
+- Post and manage internship listings
+- Review student applications
+- Provide structured feedback for interns
+- Access a dedicated employer dashboard
+
+### 🧑‍💼 Coordinator
+- Monitor all student internship activities across departments
+- Manage and publish announcements to students
+- Track progress, documents, and completion status
+
+### 🛡️ Admin
+- Full system oversight across all users and roles
+- Manage companies, students, coordinators, and employers
+- Administrative controls with a dedicated dashboard
+
+### ⚡ Platform
+- JWT-based secure authentication with `bcrypt` password hashing
+- Role-based access control (RBAC) across all routes
+- Vite HMR for instant frontend hot-reload during development
+- Flask auto-reload for instant backend updates
+- CORS-configured API with credential support
+- MongoDB with optimized indexes for fast queries
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, TypeScript, Vite 6, React Router 7 |
+| **UI Library** | Tailwind CSS 4, Radix UI, shadcn/ui, MUI, Lucide Icons |
+| **Charts & Animation** | Recharts, Motion (Framer) |
+| **Backend** | Python 3, Flask 3, Flask-CORS, Flask-PyMongo |
+| **Database** | MongoDB via PyMongo |
+| **Auth** | JWT (PyJWT), bcrypt |
+| **Forms** | React Hook Form |
+| **State / API** | Axios, service layer pattern |
+| **Dev Tooling** | ESLint, pnpm, python-dotenv |
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                     CLIENT BROWSER                       │
+│                  React + TypeScript + Vite               │
+│         (Student / Employer / Coordinator / Admin)       │
+└─────────────────────────┬────────────────────────────────┘
+                          │ HTTP / Axios  (port 5173 dev)
+                          │ Proxied → /api/*
+┌─────────────────────────▼────────────────────────────────┐
+│                  FLASK REST API                          │
+│                   (port 5000)                            │
+│  ┌──────────┐ ┌──────────┐ ┌────────────┐ ┌──────────┐  │
+│  │  /auth   │ │/students │ │/internships│ │  /admin  │  │
+│  └──────────┘ └──────────┘ └────────────┘ └──────────┘  │
+│  ┌────────────┐ ┌──────────────┐ ┌──────────────────┐   │
+│  │/coordinator│ │  /employer   │ │  /announcements  │   │
+│  └────────────┘ └──────────────┘ └──────────────────┘   │
+│                 JWT Middleware (auth.py)                  │
+└─────────────────────────┬────────────────────────────────┘
+                          │ PyMongo
+┌─────────────────────────▼────────────────────────────────┐
+│                      MONGODB                             │
+│  users │ students │ internships │ companies │ announcements│
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 👥 User Roles
+
+| Role | Access Level | Description |
+|---|---|---|
+| `student` | Student Portal | Browse listings, apply, upload documents |
+| `employer` | Employer Dashboard | Post listings, review applicants, give feedback |
+| `coordinator` | Coordinator Panel | Monitor students, manage announcements |
+| `admin` | Full System Access | Manage all entities and system settings |
+
+---
+
+## 📁 Project Structure
+
+```
+College Internship Management System/
+│
+├── 📂 backend/                     # Flask REST API
+│   ├── app.py                      # Application factory & blueprint registration
+│   ├── config.py                   # Environment-based configuration
+│   ├── database.py                 # MongoDB connection & index creation
+│   ├── requirements.txt            # Python dependencies
+│   │
+│   ├── 📂 models/                  # MongoDB data models
+│   │   ├── user.py                 # User CRUD + bcrypt auth
+│   │   ├── student.py              # Student profile model
+│   │   ├── internship.py           # Internship listing model
+│   │   ├── company.py              # Company model
+│   │   ├── coordinator.py          # Coordinator model
+│   │   └── announcement.py        # Announcement model
+│   │
+│   ├── 📂 routes/                  # Flask route blueprints
+│   │   ├── auth.py                 # Login, register, JWT
+│   │   ├── students.py             # Student profile & document routes
+│   │   ├── internships.py          # Internship CRUD
+│   │   ├── employer.py             # Employer-specific routes
+│   │   ├── coordinator.py          # Coordinator routes
+│   │   ├── announcements.py        # Announcements CRUD
+│   │   ├── companies.py            # Company management
+│   │   └── admin.py                # Admin-only routes
+│   │
+│   └── 📂 middleware/
+│       └── auth.py                 # JWT decode & role verification
+│
+├── 📂 src/                         # React frontend
+│   ├── main.tsx                    # Entry point
+│   │
+│   ├── 📂 app/
+│   │   ├── routes.ts               # React Router configuration
+│   │   ├── 📂 components/          # All page/feature components
+│   │   │   ├── login.tsx
+│   │   │   ├── register.tsx
+│   │   │   ├── student-dashboard.tsx
+│   │   │   ├── student-edit-profile.tsx
+│   │   │   ├── admin-dashboard.tsx
+│   │   │   ├── coordinator-dashboard.tsx
+│   │   │   ├── employer-dashboard.tsx
+│   │   │   └── 📂 ui/              # shadcn/ui component library
+│   │   └── 📂 constants/
+│   │       └── adminData.ts
+│   │
+│   ├── 📂 services/                # Axios API service layer
+│   │   ├── apiClient.ts            # Axios instance with base URL & interceptors
+│   │   ├── auth.ts
+│   │   ├── student.ts
+│   │   ├── employer.ts
+│   │   ├── internship.ts
+│   │   ├── company.ts
+│   │   ├── coordinator.ts
+│   │   ├── announcement.ts
+│   │   └── admin.ts
+│   │
+│   └── 📂 styles/
+│       ├── theme.css
+│       ├── tailwind.css
+│       └── index.css
+│
+├── package.json                    # Frontend dependencies (pnpm)
+├── vite.config.ts                  # Vite + proxy config
+├── tsconfig.json
+├── .env                            # Root env (if applicable)
+├── start.sh                        # Unix startup script
+├── start.bat                       # Windows startup script
+└── ARCHITECTURE_DEV_FLOW.md        # Developer architecture guide
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) v18+
+- [pnpm](https://pnpm.io/) (`npm install -g pnpm`)
+- [Python](https://www.python.org/) 3.10+
+- [MongoDB](https://www.mongodb.com/) (local instance or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
+
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/college-internship-management-system.git
+cd college-internship-management-system
+```
+
+---
+
+### 2. Backend Setup
+
+```bash
+cd backend
+
+# Create and activate virtual environment
+python -m venv venv
+
+# On Windows:
+venv\Scripts\activate
+
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables (see section below)
+cp .env.example .env
+```
+
+Start the Flask backend:
+
+```bash
+python app.py
+```
+
+> Backend runs at: `http://127.0.0.1:5000`
+
+---
+
+### 3. Frontend Setup
+
+```bash
+# From project root
+pnpm install
+
+# Start the Vite dev server
+pnpm dev
+```
+
+> Frontend runs at: `http://localhost:5173`
+
+---
+
+### 4. Quick Start (Windows)
+
+For a one-click startup of both servers:
+
+```
+Double-click: start.bat
+```
+
+For macOS/Linux:
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+---
+
+## 🔐 Environment Variables
+
+### `backend/.env`
+
+```env
+FLASK_ENV=development
+FLASK_HOST=127.0.0.1
+FLASK_PORT=5000
+MONGO_URI=mongodb://localhost:27017/internship_db
+SECRET_KEY=your_super_secret_jwt_key_here
+```
+
+| Variable | Description |
+|---|---|
+| `FLASK_ENV` | `development` or `production` |
+| `FLASK_HOST` | Host for the Flask server |
+| `FLASK_PORT` | Port for the Flask server |
+| `MONGO_URI` | MongoDB connection string |
+| `SECRET_KEY` | JWT signing secret — keep this private |
+
+> ⚠️ Never commit your `.env` file. It is listed in `.gitignore`.
+
+---
+
+## 📡 API Reference
+
+All API routes are prefixed with `/api`. Authentication uses **JWT Bearer tokens** in the `Authorization` header.
+
+### Auth
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/auth/login` | Login and receive JWT | ❌ |
+| `POST` | `/api/auth/register` | Register a new user | ❌ |
+| `GET` | `/api/auth/profile` | Get current user profile | ✅ |
+| `GET` | `/api/health` | Health check | ❌ |
+
+### Students
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/students/profile` | Get student profile | ✅ Student |
+| `PUT` | `/api/students/profile` | Update student profile | ✅ Student |
+| `POST` | `/api/students/apply/:id` | Apply to an internship | ✅ Student |
+| `GET` | `/api/students/applications` | Get student's applications | ✅ Student |
+
+### Internships
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/internships` | List all internships | ✅ |
+| `POST` | `/api/internships` | Create a new listing | ✅ Employer |
+| `PUT` | `/api/internships/:id` | Update a listing | ✅ Employer |
+| `DELETE` | `/api/internships/:id` | Delete a listing | ✅ Employer |
+
+### Coordinator & Admin
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/coordinator/students` | View all students | ✅ Coordinator |
+| `GET` | `/api/announcements` | List announcements | ✅ |
+| `POST` | `/api/announcements` | Create announcement | ✅ Coordinator |
+| `GET` | `/api/admin/users` | Manage all users | ✅ Admin |
+
+---
+
+## 🧪 Running Tests
+
+```bash
+# From project root (make sure both servers are running)
+
+# Test core authentication & student flow
+python test_flow.py
+
+# Test LinkedIn integration and logout
+python test_linkedin_and_logout.py
+
+# Test logout redirect behavior
+python test_logout_redirect.py
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! To get started:
+
+1. Fork this repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m "feat: add your feature"`
+4. Push to your branch: `git push origin feature/your-feature-name`
+5. Open a Pull Request
+
+Please follow conventional commit messages (`feat:`, `fix:`, `docs:`, `refactor:`) and ensure your code is clean before submitting.
+
+---
+
+## 📄 License
+
+This project is intended for academic and educational use. See [ATTRIBUTIONS.md](./ATTRIBUTIONS.md) for third-party library credits.
+
+---
+
+<div align="center">
+
+Made with ❤️ for college placement cells everywhere.
+
+</div>
